@@ -29,18 +29,18 @@ def busy_workers(threshold):
     threshold = 10
   try:
     r = requests.get("http://127.0.0.1/server-status?auto")
-    for l in r.iter_lines():
-      attr, value = l.split(": ")
-      if attr == 'BusyWorkers':
-        if value > threshold:
-          print('Error: Num. de workers busy por encima del umbral: {} > {}|busy_workers={}'.format(value, threshold, value))
-          sys.exit(NAGIOS_CODES['CRITICAL'])
-        else:
-          print('Num. de workers busy por debajo del umbral: {} < {}|busy_workers={}'.format(value, threshold, value))
-          sys.exit(NAGIOS_CODES['OK'])
   except:
     print('No se puede leer informacion de status de apache')
     sys.exit(NAGIOS_CODES['WARNING'])
+  for l in r.iter_lines():
+    attr, value = l.split(": ")
+    if attr == 'BusyWorkers':
+      if value > threshold:
+        print('Error: Num. de workers busy por encima del umbral: {} > {}|busy_workers={}'.format(value, threshold, value))
+        sys.exit(NAGIOS_CODES['CRITICAL'])
+      else:
+        print('Num. de workers busy por debajo del umbral: {} < {}|busy_workers={}'.format(value, threshold, value))
+        sys.exit(NAGIOS_CODES['OK'])
 
 @click.command()
 #@click.option('--network', '-n', multiple=True)
@@ -51,19 +51,19 @@ def graceful_workers(threshold):
     threshold = 10
   try:
     r = requests.get("http://127.0.0.1/server-status?auto")
-    for l in r.iter_lines():
-      attr, value = l.split(": ")
-      if attr == 'Scoreboard':
-        graceful = value.count('G')
-        if graceful > threshold:
-          print('Error: Num. de workers graceful por encima del umbral: {} > {}|graceful_workers={}'.format(graceful, threshold, graceful))
-          sys.exit(NAGIOS_CODES['CRITICAL'])
-        else:
-          print('Num. de workers graceful por debajo del umbral: {} < {}|graceful_workers={}'.format(graceful, threshold, graceful))
-          sys.exit(NAGIOS_CODES['OK'])
   except: 
     print('No se puede leer informacion de status de apache')
     sys.exit(NAGIOS_CODES['WARNING'])
+  for l in r.iter_lines():
+    attr, value = l.split(": ")
+    if attr == 'Scoreboard':
+      graceful = value.count('G')
+      if graceful > threshold:
+        print('Error: Num. de workers graceful por encima del umbral: {} > {}|graceful_workers={}'.format(graceful, threshold, graceful))
+        sys.exit(NAGIOS_CODES['CRITICAL'])
+      else:
+        print('Num. de workers graceful por debajo del umbral: {} < {}|graceful_workers={}'.format(graceful, threshold, graceful))
+        sys.exit(NAGIOS_CODES['OK'])
 
 if __name__ == '__main__':
     graceful_workers()

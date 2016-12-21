@@ -35,7 +35,7 @@ def busy_workers(threshold):
   for l in r.iter_lines():
     attr, value = l.split(": ")
     if attr == 'BusyWorkers':
-      if value > threshold:
+      if int(value) > int(threshold):
         print('Error: Num. de workers busy por encima del umbral: {} > {}|busy_workers={}'.format(value, threshold, value))
         sys.exit(NAGIOS_CODES['CRITICAL'])
       else:
@@ -66,6 +66,7 @@ def graceful_workers(threshold):
         sys.exit(NAGIOS_CODES['OK'])
 
 if __name__ == '__main__':
+    busy_workers()
     graceful_workers()
 
 

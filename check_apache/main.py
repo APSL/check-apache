@@ -39,9 +39,8 @@ def busy_workers(threshold):
           print('Num. de workers busy por debajo del umbral: {} < {}|busy_workers={}'.format(value, threshold, value))
           sys.exit(NAGIOS_CODES['OK'])
   except:
-    pass  
-  print('No se puede leer informacion de status de apache')
-  sys.exit(NAGIOS_CODES['WARNING'])
+    print('No se puede leer informacion de status de apache')
+    sys.exit(NAGIOS_CODES['WARNING'])
 
 @click.command()
 #@click.option('--network', '-n', multiple=True)
@@ -62,10 +61,9 @@ def graceful_workers(threshold):
         else:
           print('Num. de workers graceful por debajo del umbral: {} < {}|graceful_workers={}'.format(graceful, threshold, graceful))
           sys.exit(NAGIOS_CODES['OK'])
-  except:
-    pass
-  print('No se puede leer informacion de status de apache')
-  sys.exit(NAGIOS_CODES['WARNING'])
+  except: 
+    print('No se puede leer informacion de status de apache')
+    sys.exit(NAGIOS_CODES['WARNING'])
 
 if __name__ == '__main__':
     graceful_workers()

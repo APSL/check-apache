@@ -20,7 +20,8 @@ setup(
         long_description=open('README.rst').read(),
         entry_points={
                     'console_scripts': [
-                                    'check-apache = check_apache.main:check',
+                                    'check-apache-busy-workers = check_apache.main:busy_workers',
+                                    'check-apache-graceful-workers = check_apache.main:graceful_workers',
                                 ],
                 },
         install_requires=[

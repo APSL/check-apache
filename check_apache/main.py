@@ -22,27 +22,53 @@ NAGIOS_CODES = {
 
 @click.command()
 #@click.option('--network', '-n', multiple=True)
-@click.option('--busy_workers', '-b')
-def check(busy_workers):
-  # curl http://127.0.0.1/server-status?auto
-  r = requests.get("http://127.0.0.1/server-status?auto")
-  for l in r.iter_lines():
-    attr, value = l.split(": ")
-    if attr == 'BusyWorkers':
-      print('Busy: {}'.format(value))
-      if value > busy_workers:
-        print('Error: Num. de workers_busy: {} - Por encima del umbral: {}'.format(value, busy_workers))
-        sys.exit(NAGIOS_CODES['CRITICAL'])
+@click.option('--threshold', '-t')
+def busy_workers(threshold):
 
-  #if KO:
-  #    print("Error: La Ip {} del dominio {} NO pertenece a ninguna red {}.".format(ip_domain, domain, network))
-  #    sys.exit(NAGIOS_CODES['CRITICAL'])
-  #print("Las Ip's del dominio {} pertenecen a los rangos especificados {}".format(domain, network))
-  #sys.exit(NAGIOS_CODES['OK'])
+  if not threshold:
+    threshold = 10
+  try:
+    r = requests.get("http://127.0.0.1/server-status?auto")
+    for l in r.iter_lines():
+      attr, value = l.split(": ")
+      if attr == 'BusyWorkers':
+        if value > threshold:
+          print('Error: Num. de workers busy por encima del umbral: {} > {}|busy_workers={}'.format(value, threshold, value))
+          sys.exit(NAGIOS_CODES['CRITICAL'])
+        else:
+          print('Num. de workers busy por debajo del umbral: {} < {}|busy_workers={}'.format(value, threshold, value))
+          sys.exit(NAGIOS_CODES['OK'])
+  except:
+    pass  
+  print('No se puede leer informacion de status de apache')
+  sys.exit(NAGIOS_CODES['WARNING'])
 
+@click.command()
+#@click.option('--network', '-n', multiple=True)
+@click.option('--threshold', '-t')
+def graceful_workers(threshold):
+
+  if not threshold:
+    threshold = 10
+  try:
+    r = requests.get("http://127.0.0.1/server-status?auto")
+    for l in r.iter_lines():
+      attr, value = l.split(": ")
+      if attr == 'Scoreboard':
+        graceful = value.count('G')
+        if graceful > threshold:
+          print('Error: Num. de workers graceful por encima del umbral: {} > {}|graceful_workers={}'.format(graceful, threshold, graceful))
+          sys.exit(NAGIOS_CODES['CRITICAL'])
+        else:
+          print('Num. de workers graceful por debajo del umbral: {} < {}|graceful_workers={}'.format(graceful, threshold, graceful))
+          sys.exit(NAGIOS_CODES['OK'])
+  except:
+    pass
+  print('No se puede leer informacion de status de apache')
+  sys.exit(NAGIOS_CODES['WARNING'])
 
 if __name__ == '__main__':
-    check()
+    graceful_workers()
 
 
 

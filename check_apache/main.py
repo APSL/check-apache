@@ -58,7 +58,7 @@ def graceful_workers(threshold):
     attr, value = l.split(": ")
     if attr == 'Scoreboard':
       graceful = value.count('G')
-      if graceful > threshold:
+      if int(graceful) > int(threshold):
         print('Error: Num. de workers graceful por encima del umbral: {} > {}|graceful_workers={}'.format(graceful, threshold, graceful))
         sys.exit(NAGIOS_CODES['CRITICAL'])
       else:
